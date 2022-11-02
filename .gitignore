@@ -1,0 +1,7 @@
+venv/
+/.idea
+__pycache__/
+.env
+/app/core/profile_pics
+# /alembic
+# .alembic.ini
