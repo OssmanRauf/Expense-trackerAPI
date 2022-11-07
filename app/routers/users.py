@@ -6,6 +6,7 @@ from ..db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, APIRouter, HTTPException
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
+from sqlalchemy.orm import joinedload, contains_eager
 
 # Init router object
 router = APIRouter(
@@ -38,8 +39,11 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get("/all", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
-def get_user(id: int, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == id).first()
+@router.get("/", status_code=status.HTTP_200_OK,
+            response_model=UserResponse
+            )
+def get_user(db: Session = Depends(get_db), current_user: str = Depends(oauth2.get_current_user)):
+    user = db.query(models.User).options(
+        joinedload(models.User.transactions)).filter(models.User.id == current_user.id).first()
 
     return user

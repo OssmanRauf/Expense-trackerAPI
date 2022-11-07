@@ -46,3 +46,27 @@ def get_all_transactions(db: Session = Depends(get_db), current_user: str = Depe
         models.Transaction.account_id == current_user.id).all()
 
     return transaction
+
+
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
+def delete_transaction(id: int, db: Session = Depends(get_db), current_user: str = Depends(oauth2.get_current_user)):
+    user_query = db.query(models.User).filter(
+        models.User.id == current_user.id)
+    user = user_query.first()
+    transaction_query = db.query(models.Transaction).filter(
+        models.Transaction.id == id)
+    transaction = transaction_query.first()
+    if not transaction:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
+    if transaction.account_id == current_user.id:
+        if transaction.is_income:
+            user_query.update({"balance": user.balance -
+                               transaction.transaction_value, "income": user.income-transaction.transaction_value})
+        else:
+            user_query.update({"balance": user.balance +
+                               transaction.transaction_value, "expenses": user.expenses-transaction.transaction_value})
+        transaction_query.delete(synchronize_session=False)
+        db.commit()
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)

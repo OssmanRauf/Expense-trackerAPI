@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 from unittest.mock import Base
 from pydantic import BaseModel
 from datetime import datetime
-
+from .transaction import TransactionResponse
 
 # schema for Token
 
@@ -15,7 +15,7 @@ class Token(BaseModel):
 class UserBase(BaseModel):
     name: Optional[str]
     username: str
-    created_at: datetime
+    created_at: Optional[datetime]
     balance: float
 
     class Config:
@@ -33,7 +33,7 @@ class UserResponse(UserBase):
     id: Optional[int]
     income: float
     expenses: float
-    pass
+    transactions: list[TransactionResponse]
 
     class Config:
         orm_mode = True

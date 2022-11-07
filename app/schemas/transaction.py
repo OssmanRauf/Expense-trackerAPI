@@ -1,5 +1,4 @@
-import decimal
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
@@ -7,9 +6,9 @@ from datetime import datetime
 
 
 class TransactionBase(BaseModel):
-    transaction_date: datetime
+    transaction_date: Optional[datetime]
     is_income: bool
-    transaction_type: Optional[str]
+    # transaction_type: Optional[str]
     description: Optional[str]
     transaction_value: float
 
