@@ -2,9 +2,10 @@ from decimal import Decimal
 from ..core import oauth2
 from .. import models
 from ..db.database import get_db
-from sqlalchemy.orm import Session, contains_eager, joinedload
+from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, Response, APIRouter
 from ..schemas.transaction import TransactionResponse, TransactionCreate
+from typing import List
 
 
 # Init router object
@@ -40,7 +41,7 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
 
 
 # GET post by ID
-@ router.get("/", status_code=status.HTTP_200_OK, response_model=list[TransactionResponse])
+@ router.get("/", status_code=status.HTTP_200_OK, response_model=List[TransactionResponse])
 def get_all_transactions(db: Session = Depends(get_db), current_user: str = Depends(oauth2.get_current_user)):
     transaction = db.query(models.Transaction).filter(
         models.Transaction.account_id == current_user.id).all()
