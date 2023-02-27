@@ -33,7 +33,7 @@ class UserResponse(UserBase):
     id: Optional[int]
     income: float
     expenses: float
-    transactions: list[TransactionResponse]
+    transactions: List[TransactionResponse]
 
     class Config:
         orm_mode = True
